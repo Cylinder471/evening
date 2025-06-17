@@ -1,0 +1,20 @@
+replicaCount: 2
+image:
+  repository: cylinder47/snake
+  tag: latest
+  port: 80
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: ""
+      paths:
+        - path: /
+          pathType: Prefix

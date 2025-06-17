@@ -1,0 +1,27 @@
+# loki-config.yaml
+auth_enabled: false
+server:
+  http_listen_port: 3100
+common:
+  storage:
+    s3:
+      s3: s3://us-east-1/cylinder-origin-bucket
+      s3forcepathstyle: true
+  path_prefix: /var/loki
+storage_config:
+  aws:
+    s3: s3://us-east-1/cylinder-origin-bucket
+    s3forcepathstyle: true
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: aws
+      object_store: s3
+      schema: v11
+      index:
+        prefix: loki_index_
+chunk_store_config:
+  max_look_back_period: 168h
+table_manager:
+  retention_deletes_enabled: true
+  retention_period: 168h
