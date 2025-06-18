@@ -88,18 +88,6 @@ module "eks" {
           }
         }
       }
-    },
-    "RootViewer" = {
-      principal_arn     = "arn:aws:iam::434605749312:root"
-      kubernetes_groups = []
-      policy_associations = {
-        admin = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
     }
   }
 
@@ -111,45 +99,4 @@ module "eks" {
 }
 data "aws_eks_cluster_auth" "eks" {
   name = module.eks.cluster_name
-}
-module "loki_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.0"
-
-  role_name = "loki-s3"
-  role_policy_arns = {
-    policy = aws_iam_policy.loki_s3.arn
-  }
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["monitoring:loki"]
-    }
-  }
-}
-
-# Политика доступа к S3
-resource "aws_iam_policy" "loki_s3" {
-  name        = "loki-s3-access"
-  description = "Policy for Loki to access S3"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "s3:ListBucket",
-          "s3:PutObject",
-          "s3:GetObject",
-          "s3:DeleteObject"
-        ]
-        Effect = "Allow"
-        Resource = [
-          "arn:aws:s3:::cylinder-origin-bucket",
-          "arn:aws:s3:::cylinder-origin-bucket/*"
-        ]
-      }
-    ]
-  })
 }

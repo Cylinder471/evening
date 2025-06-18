@@ -1,0 +1,13 @@
+{{- if .Values.loki.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+spec:
+  selector:
+    app: loki
+  ports:
+    - port: {{ .Values.loki.servicePort }}
+      targetPort: {{ .Values.loki.servicePort }}
+  type: ClusterIP
+{{- end }}
